@@ -29,6 +29,11 @@ public class UserRepository implements GBRepository {
     }
 
     @Override
+    public List<String> readAll() {
+        return null;
+    }
+
+    @Override
     public User create(User user) {
         List<User> users = findAll();
         long max = 0L;
@@ -57,16 +62,34 @@ public class UserRepository implements GBRepository {
                 .filter(u -> u.getId()
                         .equals(userId))
                 .findFirst().orElseThrow(() -> new RuntimeException("User not found"));
-        editUser.setFirstName(update.getFirstName());
-        editUser.setLastName(update.getLastName());
-        editUser.setPhone(update.getPhone());
+        if (!update.getFirstName().isEmpty()) {
+            editUser.setFirstName(update.getFirstName());
+        }
+        if (!update.getLastName().isEmpty()) {
+            editUser.setLastName(update.getLastName());
+        }
+        if (!update.getPhone().isEmpty()) {
+            editUser.setPhone(update.getPhone());
+        }
         write(users);
         return Optional.of(update);
     }
 
     @Override
     public boolean delete(Long id) {
-        return false;
+        List<User> users = findAll();
+        boolean removed = users.removeIf(user -> user.getId().equals(id));
+        if (removed) {
+            write(users);
+            return true;
+        } else {
+            return false;
+        }
+    }
+
+    @Override
+    public void saveAll(List<String> data) {
+
     }
 
     private void write(List<User> users) {

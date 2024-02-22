@@ -27,9 +27,25 @@ public class UserController {
 
         throw new RuntimeException("User not found");
     }
+    public List<User> readAll() {
+        return repository.findAll();
+    }
 
     public void updateUser(String userId, User update) {
         update.setId(Long.parseLong(userId));
         repository.update(Long.parseLong(userId), update);
+    }
+    public User createUser(String firstName, String lastName, String phone) {
+        User user = new User(firstName, lastName, phone);
+        return repository.create(user);
+    }
+
+    public void deleteUser(long userId) {
+        boolean isUserExists = repository.delete(userId);
+        if (isUserExists) {
+            System.out.println("User deleted");
+        } else {
+            System.out.println("User not found");
+        }
     }
 }
